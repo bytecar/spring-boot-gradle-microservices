@@ -1,61 +1,61 @@
-{ { - /*
+{{- /*
   Copyright Broadcom, Inc. All Rights Reserved.
     SPDX-License-Identifier: APACHE-2.0
-  */ } }
+      */ }}
 
-  { { - if .Values.provisioning.enabled } }
+  {{- if .Values.provisioning.enabled }}
 kind: Job
 apiVersion: batch/v1
 metadata:
-  name: { { printf "%s-provisioning" (include "common.names.fullname" .) } }
-  namespace: { { include "common.names.namespace" . | quote } }
-  labels: { { - include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 } }
+  name: {{ printf "%s-provisioning" (include "common.names.fullname" .) }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
     app.kubernetes.io/component: kafka-provisioning
   annotations:
-    { { - if .Values.provisioning.useHelmHooks } }
+    {{- if .Values.provisioning.useHelmHooks }}
     helm.sh/hook: post-install,post-upgrade
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-    { { - end } }
-    { { - if .Values.commonAnnotations } }
-    { { - include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 } }
-    { { - end } }
+    {{- end }}
+    {{- if .Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
 spec:
   template:
     metadata:
-      { { - $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.provisioning.podLabels .Values.commonLabels ) "context" . ) } }
-      labels: { { - include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 } }
+      {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.provisioning.podLabels .Values.commonLabels ) "context" . ) }}
+      labels: {{- include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 }}
         app.kubernetes.io/component: kafka-provisioning
-      { { - if .Values.provisioning.podAnnotations } }
-      annotations: { { - include "common.tplvalues.render" (dict "value" .Values.provisioning.podAnnotations "context" $) | nindent 8 } }
-      { { - end } }
+      {{- if .Values.provisioning.podAnnotations }}
+      annotations: {{- include "common.tplvalues.render" (dict "value" .Values.provisioning.podAnnotations "context" $) | nindent 8 }}
+      {{- end }}
     spec:
-      serviceAccountName: { { template "kafka.provisioning.serviceAccountName" . } }
-      automountServiceAccountToken: { { .Values.provisioning.automountServiceAccountToken } }
-      enableServiceLinks: { { .Values.provisioning.enableServiceLinks } }
-      { { - include "kafka.imagePullSecrets" . | nindent 6 } }
-      { { - if .Values.provisioning.schedulerName } }
-      schedulerName: { { .Values.provisioning.schedulerName | quote } }
-      { { - end } }
-      { { - if .Values.provisioning.podSecurityContext.enabled } }
-      securityContext: { { - include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.provisioning.podSecurityContext "context" $) | nindent 8 } }
-      { { - end } }
+      serviceAccountName: {{ template "kafka.provisioning.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.provisioning.automountServiceAccountToken }}
+      enableServiceLinks: {{ .Values.provisioning.enableServiceLinks }}
+      {{- include "kafka.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.provisioning.schedulerName }}
+      schedulerName: {{ .Values.provisioning.schedulerName | quote }}
+      {{- end }}
+      {{- if .Values.provisioning.podSecurityContext.enabled }}
+      securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.provisioning.podSecurityContext "context" $) | nindent 8 }}
+      {{- end }}
       restartPolicy: OnFailure
       terminationGracePeriodSeconds: 0
-      { { - if .Values.provisioning.nodeSelector } }
-      nodeSelector: { { - include "common.tplvalues.render" ( dict "value" .Values.provisioning.nodeSelector "context" $) | nindent 8 } }
-      { { - end } }
-      { { - if .Values.provisioning.tolerations } }
-      tolerations: { { - include "common.tplvalues.render" (dict "value" .Values.provisioning.tolerations "context" .) | nindent 8 } }
-      { { - end } }
-      { { - if or .Values.provisioning.initContainers .Values.provisioning.waitForKafka } }
+      {{- if .Values.provisioning.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" ( dict "value" .Values.provisioning.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.provisioning.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.provisioning.tolerations "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.provisioning.initContainers .Values.provisioning.waitForKafka }}
       initContainers:
-        { { - if .Values.provisioning.waitForKafka } }
+        {{- if .Values.provisioning.waitForKafka }}
         - name: wait-for-available-kafka
-          image: { { include "kafka.image" . } }
-          imagePullPolicy: { { .Values.image.pullPolicy | quote } }
-          { { - if .Values.provisioning.containerSecurityContext.enabled } }
-          securityContext: { { - include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.provisioning.containerSecurityContext "context" $) | nindent 12 } }
-          { { - end } }
+          image: {{ include "kafka.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          {{- if .Values.provisioning.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.provisioning.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
           command:
             - /bin/bash
           args:
@@ -67,36 +67,36 @@ spec:
                 --timeout=120 \
                 {{ .Values.service.ports.client | int64 }};
               echo "Kafka is available";
-          { { - if .Values.provisioning.resources } }
-          resources: { { - toYaml .Values.provisioning.resources | nindent 12 } }
-          { { - else if ne .Values.provisioning.resourcesPreset "none" } }
-          resources: { { - include "common.resources.preset" (dict "type" .Values.provisioning.resourcesPreset) | nindent 12 } }
-          { { - end } }
-        { { - end } }
-        { { - if .Values.provisioning.initContainers } }
-        { { - include "common.tplvalues.render" ( dict "value" .Values.provisioning.initContainers "context" $ ) | nindent 8 } }
-        { { - end } }
-      { { - end } }
+          {{- if .Values.provisioning.resources }}
+          resources: {{- toYaml .Values.provisioning.resources | nindent 12 }}
+          {{- else if ne .Values.provisioning.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.provisioning.resourcesPreset) | nindent 12 }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.provisioning.initContainers }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.provisioning.initContainers "context" $ ) | nindent 8 }}
+        {{- end }}
+      {{- end }}
       containers:
         - name: kafka-provisioning
-          image: { { include "kafka.image" . } }
-          imagePullPolicy: { { .Values.image.pullPolicy | quote } }
-          { { - if .Values.provisioning.containerSecurityContext.enabled } }
-          securityContext: { { - include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.provisioning.containerSecurityContext "context" $) | nindent 12 } }
-          { { - end } }
-          { { - if .Values.diagnosticMode.enabled } }
-          command: { { - include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 } }
-          { { - else if .Values.provisioning.command } }
-          command: { { - include "common.tplvalues.render" (dict "value" .Values.provisioning.command "context" $) | nindent 12 } }
-          { { - else } }
+          image: {{ include "kafka.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          {{- if .Values.provisioning.containerSecurityContext.enabled }}
+          securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.provisioning.containerSecurityContext "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.diagnosticMode.enabled }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
+          {{- else if .Values.provisioning.command }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.provisioning.command "context" $) | nindent 12 }}
+          {{- else }}
           command:
             - /bin/bash
-          { { - end } }
-          { { - if .Values.diagnosticMode.enabled } }
-          args: { { - include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 12 } }
-          { { - else if .Values.provisioning.args } }
-          args: { { - include "common.tplvalues.render" (dict "value" .Values.provisioning.args "context" $) | nindent 12 } }
-          { { - else } }
+          {{- end }}
+          {{- if .Values.diagnosticMode.enabled }}
+          args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 12 }}
+          {{- else if .Values.provisioning.args }}
+          args: {{- include "common.tplvalues.render" (dict "value" .Values.provisioning.args "context" $) | nindent 12 }}
+          {{- else }}
           args:
             - -efc
             - |
@@ -185,106 +185,106 @@ spec:
               {{ .Values.provisioning.postScript | nindent 14 }}
 
               echo "Provisioning succeeded"
-          { { - end } }
+          {{- end }}
           env:
             - name: BITNAMI_DEBUG
-              value: { { ternary "true" "false" (or .Values.image.debug .Values.diagnosticMode.enabled) | quote } }
-            { { - if and (regexFind "SSL" (upper .Values.listeners.client.protocol)) .Values.provisioning.auth.tls.passwordsSecret } }
+              value: {{ ternary "true" "false" (or .Values.image.debug .Values.diagnosticMode.enabled) | quote }}
+            {{- if and (regexFind "SSL" (upper .Values.listeners.client.protocol)) .Values.provisioning.auth.tls.passwordsSecret }}
             - name: KAFKA_CLIENT_KEY_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: { { template "kafka.client.passwordsSecretName" . } }
-                  key: { { .Values.provisioning.auth.tls.keyPasswordSecretKey } }
+                  name: {{ template "kafka.client.passwordsSecretName" . }}
+                  key: {{ .Values.provisioning.auth.tls.keyPasswordSecretKey }}
             - name: KAFKA_CLIENT_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: { { template "kafka.client.passwordsSecretName" . } }
-                  key: { { .Values.provisioning.auth.tls.keystorePasswordSecretKey } }
+                  name: {{ template "kafka.client.passwordsSecretName" . }}
+                  key: {{ .Values.provisioning.auth.tls.keystorePasswordSecretKey }}
             - name: KAFKA_CLIENT_TRUSTSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: { { template "kafka.client.passwordsSecretName" . } }
-                  key: { { .Values.provisioning.auth.tls.truststorePasswordSecretKey } }
-            { { - end } }
+                  name: {{ template "kafka.client.passwordsSecretName" . }}
+                  key: {{ .Values.provisioning.auth.tls.truststorePasswordSecretKey }}
+            {{- end }}
             - name: KAFKA_SERVICE
-              value: { { printf "%s:%d" (include "common.names.fullname" .) (.Values.service.ports.client | int64) } }
-            { { - if regexFind "SASL" (upper .Values.listeners.client.protocol) } }
-            { { - if (include "kafka.saslUserPasswordsEnabled" .) } }
+              value: {{ printf "%s:%d" (include "common.names.fullname" .) (.Values.service.ports.client | int64) }}
+            {{- if regexFind "SASL" (upper .Values.listeners.client.protocol) }}
+            {{- if (include "kafka.saslUserPasswordsEnabled" .) }}
             - name: SASL_USERNAME
-              value: { { index .Values.sasl.client.users 0 | quote } }
+              value: {{ index .Values.sasl.client.users 0 | quote }}
             - name: SASL_USER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: { { include "kafka.saslSecretName" . } }
+                  name: {{ include "kafka.saslSecretName" . }}
                   key: system-user-password
-            { { - end } }
-            { { - if (include "kafka.saslClientSecretsEnabled" .) } }
+            {{- end }}
+            {{- if (include "kafka.saslClientSecretsEnabled" .) }}
             - name: SASL_CLIENT_ID
-              value: { { .Values.sasl.interbroker.clientId | quote } }
+              value: {{ .Values.sasl.interbroker.clientId | quote }}
             - name: SASL_USER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: { { include "kafka.saslSecretName" . } }
+                  name: {{ include "kafka.saslSecretName" . }}
                   key: inter-broker-client-secret
-            { { - end } }
-            { { - end } }
-            { { - if .Values.provisioning.extraEnvVars } }
-            { { - include "common.tplvalues.render" ( dict "value" .Values.provisioning.extraEnvVars "context" $) | nindent 12 } }
-            { { - end } }
-          { { - if or .Values.provisioning.extraEnvVarsCM .Values.provisioning.extraEnvVarsSecret } }
+            {{- end }}
+            {{- end }}
+            {{- if .Values.provisioning.extraEnvVars }}
+            {{- include "common.tplvalues.render" ( dict "value" .Values.provisioning.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          {{- if or .Values.provisioning.extraEnvVarsCM .Values.provisioning.extraEnvVarsSecret }}
           envFrom:
-            { { - if .Values.provisioning.extraEnvVarsCM } }
+            {{- if .Values.provisioning.extraEnvVarsCM }}
             - configMapRef:
-              name: { { include "common.tplvalues.render" (dict "value" .Values.provisioning.extraEnvVarsCM "context" $) } }
-            { { - end } }
-            { { - if .Values.provisioning.extraEnvVarsSecret } }
+              name: {{ include "common.tplvalues.render" (dict "value" .Values.provisioning.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.provisioning.extraEnvVarsSecret }}
             - secretRef:
-              name: { { include "common.tplvalues.render" (dict "value" .Values.provisioning.extraEnvVarsSecret "context" $) } }
-            { { - end } }
-          { { - end } }
-          { { - if .Values.provisioning.resources } }
-          resources: { { - toYaml .Values.provisioning.resources | nindent 12 } }
-          { { - else if ne .Values.provisioning.resourcesPreset "none" } }
-          resources: { { - include "common.resources.preset" (dict "type" .Values.provisioning.resourcesPreset) | nindent 12 } }
-          { { - end } }
+              name: {{ include "common.tplvalues.render" (dict "value" .Values.provisioning.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.provisioning.resources }}
+          resources: {{- toYaml .Values.provisioning.resources | nindent 12 }}
+          {{- else if ne .Values.provisioning.resourcesPreset "none" }}
+          resources: {{- include "common.resources.preset" (dict "type" .Values.provisioning.resourcesPreset) | nindent 12 }}
+          {{- end }}
           volumeMounts:
-            { { - if or .Values.log4j .Values.existingLog4jConfigMap } }
+            {{- if or .Values.log4j .Values.existingLog4jConfigMap }}
             - name: log4j-config
               mountPath: /opt/bitnami/kafka/config/log4j.properties
               subPath: log4j.properties
-            { { - end } }
-            { { - if (regexFind "SSL" (upper .Values.listeners.client.protocol)) } }
-            { { - if not (empty .Values.provisioning.auth.tls.certificatesSecret) } }
+            {{- end }}
+            {{- if (regexFind "SSL" (upper .Values.listeners.client.protocol)) }}
+            {{- if not (empty .Values.provisioning.auth.tls.certificatesSecret) }}
             - name: kafka-client-certs
               mountPath: /certs
               readOnly: true
-            { { - end } }
-            { { - end } }
+            {{- end }}
+            {{- end }}
             - name: tmp
               mountPath: /tmp
-            { { - if .Values.provisioning.extraVolumeMounts } }
-            { { - include "common.tplvalues.render" (dict "value" .Values.provisioning.extraVolumeMounts "context" $) | nindent 12 } }
-            { { - end } }
-        { { - if .Values.provisioning.sidecars } }
-        { { - include "common.tplvalues.render" (dict "value" .Values.provisioning.sidecars "context" $) | nindent 8 } }
-        { { - end } }
+            {{- if .Values.provisioning.extraVolumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.provisioning.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- end }}
+        {{- if .Values.provisioning.sidecars }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.provisioning.sidecars "context" $) | nindent 8 }}
+        {{- end }}
       volumes:
-        { { - if or .Values.log4j .Values.existingLog4jConfigMap } }
+        {{- if or .Values.log4j .Values.existingLog4jConfigMap }}
         - name: log4j-config
           configMap:
-            name: { { include "kafka.log4j.configMapName" . } }
-        { { - end } }
-        { { - if (regexFind "SSL" (upper .Values.listeners.client.protocol)) } }
-        { { - if not (empty .Values.provisioning.auth.tls.certificatesSecret) } }
+            name: {{ include "kafka.log4j.configMapName" . }}
+        {{- end }}
+        {{- if (regexFind "SSL" (upper .Values.listeners.client.protocol)) }}
+        {{- if not (empty .Values.provisioning.auth.tls.certificatesSecret) }}
         - name: kafka-client-certs
           secret:
-            secretName: { { .Values.provisioning.auth.tls.certificatesSecret } }
+            secretName: {{ .Values.provisioning.auth.tls.certificatesSecret }}
             defaultMode: 256
-        { { - end } }
-        { { - end } }
+        {{- end }}
+        {{- end }}
         - name: tmp
           emptyDir: { }
-        { { - if .Values.provisioning.extraVolumes } }
-        { { - include "common.tplvalues.render" (dict "value" .Values.provisioning.extraVolumes "context" $) | nindent 8 } }
-        { { - end } }
-  { { - end } }
+        {{- if .Values.provisioning.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.provisioning.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}
+  {{- end }}

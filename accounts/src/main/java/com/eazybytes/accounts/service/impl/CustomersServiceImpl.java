@@ -53,8 +53,6 @@ public class CustomersServiceImpl implements ICustomersService {
         if (null != cardsDtoResponseEntity) {
             customerDetailsDto.setCardsDto(cardsDtoResponseEntity.getBody());
         }
-
-
         return customerDetailsDto;
 
     }

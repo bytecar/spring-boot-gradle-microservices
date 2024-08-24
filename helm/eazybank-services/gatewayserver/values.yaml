@@ -7,11 +7,7 @@ appLabel: gatewayserver
 appName: gatewayserver
 
 replicaCount: 1
-
-image:
-  repository: eazybytes/gatewayserver
-  tag: s17
-
+image: "eazybytes/gatewayserver:s17"
 containerPort: 8072
 
 service:

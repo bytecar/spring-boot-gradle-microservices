@@ -1,25 +1,25 @@
-{ { - /*
+{{- /*
   Copyright Broadcom, Inc. All Rights Reserved.
     SPDX-License-Identifier: APACHE-2.0
-  */ } }
+      */ }}
 
-  { { - $replicaCount := int .Values.controller.replicaCount } }
-  { { - if and .Values.kraft.enabled (include "kafka.controller.createConfigmap" .) (gt $replicaCount 0) } }
+  {{- $replicaCount := int .Values.controller.replicaCount }}
+  {{- if and .Values.kraft.enabled (include "kafka.controller.createConfigmap" .) (gt $replicaCount 0) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: { { printf "%s-controller-configuration" (include "common.names.fullname" .) } }
-  namespace: { { include "common.names.namespace" . | quote } }
-  labels: { { - include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 } }
+  name: {{ printf "%s-controller-configuration" (include "common.names.fullname" .) }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
     app.kubernetes.io/component: controller-eligible
     app.kubernetes.io/part-of: kafka
-  { { - if .Values.commonAnnotations } }
-  annotations: { { - include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 } }
-  { { - end } }
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 data:
-  { { - if or .Values.config .Values.controller.config } }
-  server.properties: { { - include "common.tplvalues.render" ( dict "value" (coalesce .Values.controller.config .Values.config) "context" $ ) | nindent 4 } }
-  { { - else } }
+  {{- if or .Values.config .Values.controller.config }}
+  server.properties: {{- include "common.tplvalues.render" ( dict "value" (coalesce .Values.controller.config .Values.config) "context" $ ) | nindent 4 }}
+  {{- else }}
   server.properties: |-
     # Listeners configuration
     listeners={{ include "kafka.listeners" ( dict "isController" true "context" $ ) }}
@@ -51,5 +51,5 @@ data:
     {{- include "common.tplvalues.render" ( dict "value" .Values.extraConfig "context" $ ) | nindent 4 }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.controller.extraConfig "context" $ ) | nindent 4 }}
     {{- include "kafka.properties.render" (merge .Values.controller.extraConfigYaml .Values.extraConfigYaml) | nindent 4 }}
-  { { - end } }
-  { { - end } }
+  {{- end }}
+  {{- end }}

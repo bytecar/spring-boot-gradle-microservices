@@ -737,7 +737,7 @@
       ]
     },
     {
-      "name": "configserver",
+      "name": "config-server",
       "item": [
         {
           "name": "encrypt",
@@ -830,10 +830,10 @@
       ]
     },
     {
-      "name": "gatewayserver",
+      "name": "gateway-server",
       "item": [
         {
-          "name": "gatewayserver_1",
+          "name": "gateway-server_1",
           "request": {
             "auth": {
               "type": "bearer",
@@ -873,7 +873,7 @@
           "response": []
         },
         {
-          "name": "gatewayserver_2",
+          "name": "gateway-server_2",
           "request": {
             "method": "GET",
             "header": [],
@@ -900,7 +900,7 @@
           "response": []
         },
         {
-          "name": "gatewayserver_3",
+          "name": "gateway-server_3",
           "request": {
             "auth": {
               "type": "bearer",
@@ -941,7 +941,7 @@
           "response": []
         },
         {
-          "name": "gatewayserver_4",
+          "name": "gateway-server_4",
           "request": {
             "method": "GET",
             "header": [],
@@ -1236,7 +1236,7 @@
       ]
     },
     {
-      "name": "gatewayserver_security",
+      "name": "gateway-server_security",
       "item": [
         {
           "name": "Accounts_GET_PermitAll",

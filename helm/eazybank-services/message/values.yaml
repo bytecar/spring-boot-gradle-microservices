@@ -8,9 +8,7 @@ appName: message
 
 replicaCount: 1
 
-image:
-  repository: eazybytes/message
-  tag: s17
+image: "eazybytes/message:s17"
 
 containerPort: 9010
 

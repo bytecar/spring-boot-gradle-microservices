@@ -7,11 +7,7 @@ appLabel: accounts
 appName: accounts
 
 replicaCount: 2
-
-image:
-  repository: eazybytes/accounts
-  tag: s17
-
+image: "eazybytes/accounts:s17"
 containerPort: 8080
 
 service:

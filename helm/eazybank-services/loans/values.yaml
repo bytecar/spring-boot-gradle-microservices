@@ -8,10 +8,7 @@ appName: loans
 
 replicaCount: 1
 
-image:
-  repository: eazybytes/loans
-  tag: s17
-
+image: "eazybytes/loans:s17"
 containerPort: 8090
 
 service:

@@ -1,22 +1,22 @@
-{ { - /*
+{{- /*
   Copyright Broadcom, Inc. All Rights Reserved.
     SPDX-License-Identifier: APACHE-2.0
-  */ } }
+      */ }}
 
-  { { - $releaseNamespace := include "common.names.namespace" . } }
-  { { - $fullname := include "common.names.fullname" . } }
-  { { - $clusterDomain := .Values.clusterDomain } }
+  {{- $releaseNamespace := include "common.names.namespace" . }}
+  {{- $fullname := include "common.names.fullname" . }}
+  {{- $clusterDomain := .Values.clusterDomain }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: { { printf "%s-scripts" $fullname } }
-  namespace: { { $releaseNamespace  | quote } }
-  labels: { { - include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 } }
-  { { - if .Values.commonAnnotations } }
-  annotations: { { - include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 } }
-  { { - end } }
+  name: {{ printf "%s-scripts" $fullname }}
+  namespace: {{ $releaseNamespace  | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 data:
-  { { - if .Values.externalAccess.autoDiscovery.enabled } }
+  {{- if .Values.externalAccess.autoDiscovery.enabled }}
   auto-discovery.sh: |-
     #!/bin/bash
     SVC_NAME="${MY_POD_NAME}-external"
@@ -71,7 +71,7 @@ data:
       echo "Unsupported autodiscovery service type: '$AUTODISCOVERY_SERVICE_TYPE'"
       exit 1
     fi
-  { { - end } }
+  {{- end }}
   kafka-init.sh: |-
     #!/bin/bash
 
