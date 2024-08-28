@@ -5,13 +5,15 @@ spring:
     # active: native
     active: git
   cloud:
+    refresh:
+      enabled: true
     config:
       server:
         # native:
         # search-locations: "classpath:/config"
         # search-locations: "file:///Users//eazybytes//Documents//config"
         git:
-          uri: "https://github.com/eazybytes/eazybytes-config.git"
+          uri: "https://github.com/bytecar/spring-boot-gradle-microservices-config.git"
           default-label: main
           timeout: 5
           clone-on-start: true

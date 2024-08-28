@@ -7,7 +7,7 @@ appLabel: gatewayserver
 appName: gatewayserver
 
 replicaCount: 1
-image: "eazybytes/gatewayserver:s17"
+image: "bytecar/gatewayserver:latest"
 containerPort: 8072
 
 service:

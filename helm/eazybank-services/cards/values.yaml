@@ -8,7 +8,7 @@ appName: cards
 
 replicaCount: 1
 
-image: "eazybytes/cards:s17"
+image: "bytecar/cards:latest"
 containerPort: 9000
 
 service:

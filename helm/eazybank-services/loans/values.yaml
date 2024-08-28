@@ -8,7 +8,7 @@ appName: loans
 
 replicaCount: 1
 
-image: "eazybytes/loans:s17"
+image: "bytecar/loans:latest"
 containerPort: 8090
 
 service:

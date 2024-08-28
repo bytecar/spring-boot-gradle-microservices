@@ -8,7 +8,7 @@ appName: message
 
 replicaCount: 1
 
-image: "eazybytes/message:s17"
+image: "bytecar/message:latest"
 
 containerPort: 9010
 

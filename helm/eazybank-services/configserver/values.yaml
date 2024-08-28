@@ -8,7 +8,7 @@ appName: configserver
 
 replicaCount: 1
 
-image: "eazybytes/configserver:s17"
+image: "bytecar/configserver:latest"
 containerPort: 8071
 
 service:
