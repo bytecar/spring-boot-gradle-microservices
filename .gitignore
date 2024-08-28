@@ -30,3 +30,5 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 /Microservices/
+/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+/.gradle/buildOutputCleanup/cache.properties
